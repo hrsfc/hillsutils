@@ -1,0 +1,21 @@
+{
+    "appName": "hillsutils",
+    "projectId": "20bc3e6f-84c7-4d2e-bebf-24c4bc09c84b",
+    "solutionSettings": {
+        "name": "fx-solution-azure",
+        "version": "1.0.0",
+        "hostType": "Azure",
+        "capabilities": [
+            "Tab"
+        ],
+        "azureResources": [],
+        "activeResourcePlugins": [
+            "fx-resource-frontend-hosting",
+            "fx-resource-aad-app-for-teams",
+            "fx-resource-local-debug",
+            "fx-resource-appstudio",
+            "fx-resource-simple-auth"
+        ]
+    },
+    "programmingLanguage": "typescript"
+}

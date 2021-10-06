@@ -1,0 +1,49 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.9/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.9",
+    "version": "1.0.0",
+    "id": "{appid}",
+    "packageName": "net.clicksminuteper.msteams.hillsutils",
+    "developer": {
+        "name": "Clicks Minute Per",
+        "websiteUrl": "https://hillsutils.clicksminuteper.net",
+        "privacyUrl": "https://clicksminuteper.net/clicksforms/privacy",
+        "termsOfUseUrl": "https://clicksminuteper.net/clicksforms/tos"
+    },
+    "icons": {
+        "color": "logo_color.png",
+        "outline": "logo_outline.png"
+    },
+    "name": {
+        "short": "hillsutils",
+        "full": "Hills Utils"
+    },
+    "description": {
+        "short": "Utilities for HRSFC",
+        "full": "Tools and Utilities to make your time at Hills Road 6th Form College easier"
+    },
+    "accentColor": "#910028",
+    "bots": [],
+    "composeExtensions": [],
+    "configurableTabs": [],
+    "staticTabs": [
+        {
+            "entityId": "index",
+            "name": "Timetable",
+            "contentUrl": "https://hillsutils.clicksminuteper.net/timetable",
+            "websiteUrl": "https://hillsutils.clicksminuteper.net/timetable",
+            "scopes": [
+                "personal"
+            ]
+        }
+    ],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [],
+    "webApplicationInfo": {
+        "id": "{appClientId}",
+        "resource": "{webApplicationInfoResource}"
+    }
+}
