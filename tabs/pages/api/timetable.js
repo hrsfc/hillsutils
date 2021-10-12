@@ -2,14 +2,19 @@ import axios from 'axios';
 import axiosCookieJarSupport from 'axios-cookiejar-support';
 import { NtlmClient } from 'axios-ntlm';
 import { CookieJar } from 'tough-cookie';
+import dateFormat from 'dateformat';
 import * as jsdom from 'jsdom';
-import * as qs from 'qs';
 
+// Longer subject codes should *always* be first
 const subjects = {
+  "ENR": "Enrichment",
+
   "MF": "Maths",
   "CG": "Computer Science",
   "TU": "Tutorial",
   "EP": "Extended Project",
+  "PH": "Physics",
+  "BS": "Business Studies"
 }
 
 axiosCookieJarSupport(axios);
@@ -33,6 +38,12 @@ class Lesson {
     this.start = classInfo[0]
     this.end = classInfo[2]
     this.class = classInfo[3]
+    for (const [code, subject] of Object.entries(subjects)) {
+      if (this.class.startsWith(code)) {
+        this.class = subject;
+        break;
+      }
+    }
   }
 }
 
@@ -46,15 +57,21 @@ function getHUWeekStart(date) {
 }
 
 function getDates(start, weeks) {
-  const number_of_weeks = req.query.number_of_weeks - 1;
+  const number_of_weeks = weeks - 1;
   if (number_of_weeks < 0) throw "Error: Weeks was not positive";
   start = getHUWeekStart(start);
 
   // if (number_of_weeks < 0) return res.status(200).json({error: "The number_of_weeks to return *must* be positive"});
 
+  const dates = [start];
+
   for (var i = 0; i < number_of_weeks; i++) {
-    dates.push(dates[-1].addDays(7));
+    let date = new Date(dates[dates.length - 1])
+    date.setDate(date.getDate() + 7)
+    dates.push(date);
   }
+  
+  return dates;
 }
 
 /**
@@ -78,6 +95,12 @@ function getDates(start, weeks) {
  * The error message is generally not so technical that it should not be shown to the user, although you may wish to add extra details such as your contact information when displaying it
  */
 export default async function handler(req, res) {
+  const number_of_weeks = req.query.weeks ?? 3;
+  const start = req.query.start ?? new Date();
+
+  let weeks = getDates(start, number_of_weeks);
+  let currentWeek = getHUWeekStart(new Date());
+
   const cookieJar = new CookieJar();
   const credentials = {
     username: req.query.username,
@@ -114,45 +137,48 @@ export default async function handler(req, res) {
   const query = response.headers.location.split(/\?(.+)/)[1]
 
   response = await client.get(`ilp/prosolution/21_3/pstimetable.aspx?${query}`)
-  
+  const initialResponse = response;
+
   /*, data, {
     headers: { 
       "Content-Type": "application/x-www-form-urlencoded"
     }
   })*/
+  let allDates = [];
+  for (let week of weeks) {
+    let timetableDom = new jsdom.JSDOM(response.data);
 
-  let timetableDom = new jsdom.JSDOM(response.data);
+    const form = timetableDom.window.document.querySelector('form#form1');
+    
+    const formData = new timetableDom.window.FormData(form);
+    formData.set("ctl00$ctl00$ctl00$ctl00$Content$Content$Content$MainContent$calWeekBeginning", dateFormat(week, "dd/mm/yyyy"))
+    formData.set("ctl00$ctl00$ctl00$ctl00$Content$Content$Content$MainContent$btnView", "Refresh")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
+    formData.set("__EVENTTARGET", "")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
+    formData.set("__EVENTARGUMENT", "")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
+    formData.set("__LASTFOCUS", "")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
+    formData.set("__SCROLLPOSITIONX", "0")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
+    formData.set("__SCROLLPOSITIONY", "0")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
+    // Note: it started working so I'm going to leave further investigation & reverse engineering out of the question for now. If it stops returning custom date ranges, this may be something we should investigate
 
-  const form = timetableDom.window.document.querySelector('form#form1');
-  
-  const formData = new timetableDom.window.FormData(form);
-  formData.set("ctl00$ctl00$ctl00$ctl00$Content$Content$Content$MainContent$calWeekBeginning", "14/09/2021")
-  formData.set("ctl00$ctl00$ctl00$ctl00$Content$Content$Content$MainContent$btnView", "Refresh")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
-  formData.set("__EVENTTARGET", "")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
-  formData.set("__EVENTARGUMENT", "")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
-  formData.set("__LASTFOCUS", "")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
-  formData.set("__SCROLLPOSITIONX", "0")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
-  formData.set("__SCROLLPOSITIONY", "0")  // Note: we don't know where this is set on the actual client application, please investigate if this doesn't start working quickly
-  // Note: it started working so I'm going to leave further investigation & reverse engineering out of the question for now. If it stops returning custom date ranges, this may be something we should investigate
+    if (currentWeek.getDate() === week.getDate()) {
+      response = initialResponse;
+      //console.log("Optimisation successful (using current week instead of week)")
+    } else {
+      response = await client.post(`ilp/prosolution/21_3/pstimetable.aspx?${query}`, new URLSearchParams(formData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    }
 
-  console.log(Array.from(formData.entries()));
+    timetableDom = new jsdom.JSDOM(response.data);
 
-  response = await client.post(`ilp/prosolution/21_3/pstimetable.aspx?${query}`, new URLSearchParams(formData), {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    let periods = Array.from(timetableDom.window.document.querySelectorAll('div.activity,td.normal'));
+    let dates = Array.from(timetableDom.window.document.querySelectorAll('th.date')).map(date => [date.textContent, []])
 
-  console.log(response.data);
+    periods.forEach((period, index) => {
+      if(period.tagName == "TD") return;
+      dates[index % 5][1].push(new Lesson(period.textContent.split("\n")));
+    })
 
-  timetableDom = new jsdom.JSDOM(response.data);
+    allDates = allDates.concat(dates);
+  };
 
-  let periods = Array.from(timetableDom.window.document.querySelectorAll('div.activity,td.normal'));
-  let dates = Array.from(timetableDom.window.document.querySelectorAll('th.date')).map(date => [date.textContent, []])
-
-  console.log(periods)
-  console.log(dates)
-
-  periods.forEach((period, index) => {
-    if(period.tagName == "TD") return;
-    dates[index % 5][1].push(new Lesson(period.textContent.split("\n")));
-  })
-
-  res.status(200).json({data: dates});
+  res.status(200).json({data: allDates});
 }
