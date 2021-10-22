@@ -1,7 +1,7 @@
 .timetable {
   display: flex;
   flex-flow: row wrap;
-  justify-content: stretch;
+  justify-content: space-evenly;
   align-items: stretch;
   align-content: stretch;
   gap: 0px;
@@ -16,7 +16,9 @@
   margin-top: 5px;
   margin-bottom: 5px;
   background-color: #424242;
-  min-width: 300px;
+  min-width: 250px;
+  margin-bottom: 30px;
+  border-radius: 20px;
 }
 
 .dayHeader {
@@ -26,6 +28,7 @@
   background-color: #F27878;
   text-align: center;
   justify-content: center;
+  border-radius: 20px 20px 0 0;
 }
 
 .times {
@@ -38,7 +41,7 @@
   left: 0;
   margin-left: 5px;
   margin-right: 5px;
-  background-color: #F2D478;
+  background-color: #6576CC;
   display: flex;
   flex-direction: column-reverse;
   justify-content: center;
@@ -51,7 +54,7 @@
   position: relative;
   left: 0;
   margin: 0;
-  background-color: #C4C4C4;
+  background-color: #A358B2;
   display: flex;
   flex-direction: column-reverse;
   justify-content: center;

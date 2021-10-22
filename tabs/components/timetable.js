@@ -3,6 +3,7 @@ import Styles from '../styles/Timetable.module.css';
 
 class TimeTable extends Component {
     render () {
+        console.log(this.props.lessons);
         return (
             <div className={Styles.timetable}>
                 {this.props.lessons.map((day, index) => {
@@ -46,7 +47,8 @@ class TimeTable extends Component {
                                         : (
                                             <div key={index} className={Styles.lesson} style={{top: `${start * 1.5 + length - position}px`, height: `${length}px`}}>
                                                 <span>
-                                                    {`${lesson["class"]} with ${lesson["teacher"]}`}<br/>
+                                                    {lesson["class"]}<br/>
+                                                    {lesson["teacher"]}<br/>
                                                     {`${lesson["start"]} to ${lesson["end"]} in ${lesson["room"]}`}
                                                 </span>
                                             </div>

@@ -29,12 +29,16 @@ class Login extends Component {
 
     render () {
         return (
-            <form className={Styles.form} onSubmit={this.handleSubmit}>
-                {this.props.reason}<br/>
-                Username: <input className={Styles.input} type='text' value={this.state.username} onChange={this.handleChange('username')}/><br/>
-                Password: <input className={Styles.input} type='password' value={this.state.password} onChange={this.handleChange('password')}/><br/>
-                <button className={Styles.submit} type='submit'>Login</button>
-            </form>
+            <>
+                <div className={Styles.errorMessage + (this.props.reason ? "" : " " + Styles.hidden)}>
+                    {this.props.reason}
+                </div>
+                <form className={Styles.form} onSubmit={this.handleSubmit}>
+                    <span className={Styles.inputTypeText}>Username:</span><input className={Styles.input} type='text' value={this.state.username} onChange={this.handleChange('username')}/>
+                    <span className={Styles.inputTypeText}>Password:</span><input className={Styles.input} type='password' value={this.state.password} onChange={this.handleChange('password')}/>
+                    <button className={Styles.submit} type='submit'>Login</button>
+                </form>
+            </>
         );
     }
 }

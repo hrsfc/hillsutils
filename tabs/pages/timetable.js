@@ -2,6 +2,12 @@ import { Component } from 'react';
 import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import TimeTable from '../components/timetable';
 import Login from '../components/login';
+import Image from 'next/image';
+import Styles from '../styles/TimetablePage.module.css';
+import LoginStyles from '../styles/Login.module.css';
+import Datetime from 'react-datetime';
+import { withRouter } from 'next/router';
+import Link from 'next/link';
 
 const TimeTablePageStates = {
     loading: 0,
@@ -12,19 +18,24 @@ const TimeTablePageStates = {
 class TimeTablePage extends Component {
     constructor(props) {
         super(props);
+	const cookies = parseCookies();
         this.state = {
             lessons: [],
             state: TimeTablePageStates.loading,
-            reason: undefined
-        }
+            reason: undefined,
+	    date: {weeks: 1, start: null},
+	    username: cookies.username,
+	    password: cookies.password
+	}
         this.req;
         this.updateTimetable = this.updateTimetable.bind(this);
         this.attemptToLogin = this.attemptToLogin.bind(this);
+	this.handleWeeksChange = this.handleWeeksChange.bind(this);
+	this.handleDateChange = this.handleDateChange.bind(this);
     }
     componentDidMount() {
-        const cookies = parseCookies();
-        let username = cookies.username;
-        let password = cookies.password;
+        let username = this.state.username;
+        let password = this.state.password;
         if (username && password) {
             this.updateTimetable(username, password);
         } else {
@@ -55,7 +66,7 @@ class TimeTablePage extends Component {
                     if (data.error) {
                         return this.setState({state: TimeTablePageStates.login, reason: data.error});
                     }
-                    this.setState({lessons: data.data, state: TimeTablePageStates.timetable});
+                    this.setState({lessons: data.data, state: TimeTablePageStates.timetable, username: username, password: password});
                     this.req = null;
                     setCookie(
                         null, 'username', username, {
@@ -76,29 +87,76 @@ class TimeTablePage extends Component {
                 }
             }
         };
-        this.req.open("GET", `/api/timetable?username=${username}&password=${password}`);
+        this.req.open("GET", `/api/timetable?username=${username}&password=${password}&weeks=${this.state.date.weeks}&start=${this.state.date.start ?? new Date().toDateString()}`);
         this.req.send();
     }
+
+    handleWeeksChange(e) {
+	e.preventDefault();
+	if (e.target.value >= 1) {
+	    this.setState(
+		state => {
+		    return {
+			date: {
+			    start: state.date.start,
+			    weeks: e.target.value
+			}
+		    }
+		}
+	    );
+	}
+    }
+
+    handleDateChange(moment) {
+	this.setState(
+	    state => {
+		return {
+		    date: {
+			start: moment,
+			weeks: state.date.weeks
+		    }
+		}
+	    }
+	);
+    }
+    
     render() {
-        switch (this.state.state) {
-            case TimeTablePageStates.loading:
-                return (
-                    <div>
-                    Loading...
-                    </div>
-                );
-            case TimeTablePageStates.login:
-                return (
-                    <Login reason={this.state.reason} attemptToLogin={this.attemptToLogin} />
-                );
-            case TimeTablePageStates.timetable:
-                return (
-                    <TimeTable lessons={this.state.lessons}/>
-                );
-            default:
-                throw "ProgrammerError: TimeTablePageStates is not a valid enum value";
-        }
+        return (
+		<>
+                <div className={Styles.backgroundWave}>
+                {(() => {switch (this.state.state) {
+		    case TimeTablePageStates.loading:
+		    return (
+			    <div>
+			    Loading...
+			    </div>
+		    );
+		    case TimeTablePageStates.login:
+		    return (
+			    <Login reason={this.state.reason} attemptToLogin={this.attemptToLogin} />
+		    );
+		    case TimeTablePageStates.timetable:
+		    return (
+			    <>
+			    <TimeTable lessons={this.state.lessons}/>
+			    <div className={LoginStyles.form + " " + Styles.form} >
+			    <span className={LoginStyles.inputTypeText}>Start week:</span>
+			    <Datetime className={Styles.outer} onChange={this.handleDateChange} value={this.state.date.start ?? new Date()} dateFormat="D / M / Y" timeFormat={false} />
+			    <span className={LoginStyles.inputTypeText}>Number of weeks:</span>
+			    <input type="number" className={LoginStyles.input + " " + Styles.input} onChange={this.handleWeeksChange} value={this.state.date.weeks} />
+			    <button className={LoginStyles.submit + " " + Styles.submit} onClick={() => this.updateTimetable(this.state.username, this.state.password)}>Refresh timetable</button>
+                <Link href={`${this.props.router.basePath}/api/ical?username=${this.state.username}&password=${this.state.password}&weeks=${this.state.date.weeks}&start=${this.state.date.start ?? new Date().toDateString()}`}><a className={LoginStyles.submit + " " + Styles.submit}>Export as ical</a></Link>
+                <Link href={`${this.props.router.basePath}/api/ical?username=${this.state.username}&password=${this.state.password}&weeks=${this.state.date.weeks}`}><a className={LoginStyles.submit + " " + Styles.submit}>Export as rolling ical</a></Link>
+			    </div>
+			    </>
+		    );
+		    default:
+		    throw "ProgrammerError: TimeTablePageStates is not a valid enum value";
+            }})()}
+	    </div>
+		</>
+        );
     }
 }
 
-export default TimeTablePage;
+export default withRouter(TimeTablePage);

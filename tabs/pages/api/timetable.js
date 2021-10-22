@@ -84,7 +84,7 @@ function getDates(start, weeks) {
  * 
  * The username should be a proportal username for hills road 6th form college, generally these are in the form [a-z]{2}[0-9]{6}, where the letters are the student initials and the numbers are the student ID
  * The password should be the password for the proportal account
- * The start_date should be in the format yyyy-mm-dd. It should be noted that here weeks start on saturday despite starting on Monday on proportal. This is so that fetching the timetable for saturday does not give you the previous week
+ * The start_date should be convertable to a date by new Date(). It should be noted that here weeks start on saturday despite starting on Monday on proportal. This is so that fetching the timetable for saturday does not give you the previous week
  * The number_of_weeks should be a number of weeks that you would like to output after the start date. Putting 1 will only output 1 week, putting 2 will output the selected week and the next week etc. You may only input positive values. It's considered good practice to output only as many weeks as you need. If there is a demand for skipping weeks, please contact st137303@hrsfc.ac.uk and another solution may be implemented
  * 
  * The JSON is in the format
@@ -95,49 +95,54 @@ function getDates(start, weeks) {
  * The error message is generally not so technical that it should not be shown to the user, although you may wish to add extra details such as your contact information when displaying it
  */
 export default async function handler(req, res) {
-  const number_of_weeks = req.query.weeks ?? 3;
-  const start = req.query.start ?? new Date();
+    let number_of_weeks = parseInt(req.query.weeks);
+    number_of_weeks = number_of_weeks == NaN ? 1 : number_of_weeks;
+    number_of_weeks = number_of_weeks < 1 ? 1 : number_of_weeks;
+    
+    let start = new Date(req.query.start);
+    start = start == "Invalid Date" ? new Date() : start;
 
-  let weeks = getDates(start, number_of_weeks);
-  let currentWeek = getHUWeekStart(new Date());
+    let weeks = getDates(start, number_of_weeks);
+    let currentWeek = getHUWeekStart(new Date());
 
-  const cookieJar = new CookieJar();
-  const credentials = {
-    username: req.query.username,
-    password: req.query.password,
-//    domain: ""
-  }
-  const config = {
-    baseURL: 'https://intranet.hrsfc.ac.uk/ProPortal/pages',
-    method: 'get',
-    jar: cookieJar,
-    withCredentials: true,
-  }
-  
-  const client = NtlmClient(credentials, config);
-  client.interceptors.response.use(interceptor, errorInterceptor);
-
-  await client.get('/Index/StudentSelection.aspx', {
-    jar: cookieJar,
-    withCredentials: true,
-  })
-  await client.get('/Index/StudentSelection.aspx', {
-    jar: cookieJar,
-    withCredentials: true,
-    headers: {
-      'Authorization': 'NTLM TlRMTVNTUAABAAAAMYCI4gAAAAAoAAAAAAAAACgAAAAGAbEdAAAADw=='
+    const cookieJar = new CookieJar();
+    const credentials = {
+	username: req.query.username,
+	password: req.query.password,
+	//    domain: ""
     }
-  })
+    const config = {
+	baseURL: 'https://intranet.hrsfc.ac.uk/ProPortal/pages',
+	method: 'get',
+	jar: cookieJar,
+	withCredentials: true,
+    }
+    
+    const client = NtlmClient(credentials, config);
+    client.interceptors.response.use(interceptor, errorInterceptor);
+
+    /*  await client.get('/Index/StudentSelection.aspx', {
+	jar: cookieJar,
+	withCredentials: true,
+	})*/  // I initially thought this request was needed; it doesn't appear to be. 
+    await client.get('/Index/StudentSelection.aspx', {
+	jar: cookieJar,
+	withCredentials: true,
+	headers: {
+	    'Authorization': 'NTLM TlRMTVNTUAABAAAAMYCI4gAAAAAoAAAAAAAAACgAAAAGAbEdAAAADw=='
+	}
+    })
 
 
-  let response = await client.get('/Index/StudentSelection.aspx')
+	       let response = await client.get('/Index/StudentSelection.aspx')
+	       // This one is though :cries:
 
-  if (!response.headers.location) return res.status(200).json({error: "The supplied password was incorrect or your account is locked for too many incorrect password attempts. Please try again and if you still can't login wait 1 hour before retrying. If the problem persists, please make sure your username and password work on https://intranet.hrsfc.ac.uk/internal/, and if they do contact st137303@hrsfc.ac.uk"})
+	       if (!response.headers.location) return res.status(200).json({error: "The supplied password was incorrect or your account is locked for too many incorrect password attempts. Please try again and if you still can't login wait 1 hour before retrying. If the problem persists, please make sure your username and password work on https://intranet.hrsfc.ac.uk/internal/, and if they do contact st137303@hrsfc.ac.uk"})
 
-  const query = response.headers.location.split(/\?(.+)/)[1]
+	       const query = response.headers.location.split(/\?(.+)/)[1]
 
-  response = await client.get(`ilp/prosolution/21_3/pstimetable.aspx?${query}`)
-  const initialResponse = response;
+	       response = await client.get(`ilp/prosolution/21_3/pstimetable.aspx?${query}`)
+	       const initialResponse = response;
 
   /*, data, {
     headers: { 
