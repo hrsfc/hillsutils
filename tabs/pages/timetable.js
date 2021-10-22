@@ -83,6 +83,7 @@ class TimeTablePage extends Component {
                         }
                     )
                 } else {
+                    if (this.req.status == 0) return  // status 0 means cancelled
                     this.setState({state: TimeTablePageStates.login, reason: `Request to server failed with status ${this.req.status}`});
                 }
             }
@@ -93,7 +94,7 @@ class TimeTablePage extends Component {
 
     handleWeeksChange(e) {
 	e.preventDefault();
-	if (e.target.value >= 1) {
+	if (e.target.value >= 1 || e.target.value == "") {
 	    this.setState(
 		state => {
 		    return {

@@ -38,6 +38,7 @@
     color: var(--foreground);
     text-align: center;
     font-size: 1em;
+    cursor: pointer;
 }
 
 .submit:hover,.submit:active {
