@@ -49,6 +49,8 @@ export default async function handler(req, res) {
             let [start_hours, start_minutes] = lesson.start.split(":")
             let [end_hours, end_minutes] = lesson.end.split(":")
             let teacher_names = lesson.teacher.split(" ");
+            
+            year = "20" + year
 
             builder.events.push({
                 start: new Date(year, month, day, start_hours, start_minutes),
