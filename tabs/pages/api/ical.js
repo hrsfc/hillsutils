@@ -39,16 +39,13 @@ export default async function handler(req, res) {
     var builder = createIcsFileBuilder();
 
     builder.calname = 'Hills road 6th form';
-    builder.timezone = 'europe/london';
+    builder.tzid = 'europe/london';
     builder.method = 'REQUEST';
 
     data.data.forEach(dayInfo => {
         dayInfo[1].forEach(lesson => {
             let date = dayInfo[0].split(" ")[1]
             let [day, month, year] = date.split("/")
-            
-            console.log(date)
-            console.log(lesson.start)
             
             let [start_hours, start_minutes] = lesson.start.split(":")
             let [end_hours, end_minutes] = lesson.end.split(":")
@@ -58,9 +55,6 @@ export default async function handler(req, res) {
             month = parseInt(month) - 1
             start_hours = parseInt(start_hours)
             end_hours = parseInt(end_hours)
-
-            console.log(start_hours)
-            console.log(new Date(year, month, day, start_hours, start_minutes).toUTCString())
             
             builder.events.push({
                 start: new Date(year, month, day, start_hours, start_minutes),
