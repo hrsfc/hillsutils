@@ -51,6 +51,7 @@ export default async function handler(req, res) {
             let teacher_names = lesson.teacher.split(" ");
             
             year = "20" + year
+            month = parseInt(month) - 1
 
             builder.events.push({
                 start: new Date(year, month, day, start_hours, start_minutes),
