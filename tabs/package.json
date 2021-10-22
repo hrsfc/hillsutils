@@ -15,6 +15,8 @@
     "dateformat": "^5.0.1",
     "ical-toolkit": "^1.0.9",
     "jsdom": "^17.0.0",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
     "next": "11.1.2",
     "nookies": "^2.5.2",
     "qs": "^6.10.1",
@@ -22,8 +24,7 @@
     "react-datetime": "^3.1.1",
     "react-dom": "17.0.2",
     "tough-cookie": "^4.0.0",
-    "xml2js": "^0.4.23",
-    "moment": "^2.29.1" 
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "eslint": "7.32.0",

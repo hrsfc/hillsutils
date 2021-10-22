@@ -1,5 +1,6 @@
 import getTimetable from './timetable';
 import { createIcsFileBuilder } from 'ical-toolkit';
+import * as moment from 'moment-timezone';
 
 /**
  * 
@@ -39,7 +40,10 @@ export default async function handler(req, res) {
     var builder = createIcsFileBuilder();
 
     builder.calname = 'Hills road 6th form';
+    
+    builder.tzid = 'europe/london';
     builder.timezone = 'europe/london';
+
     builder.method = 'REQUEST';
 
     data.data.forEach(dayInfo => {
@@ -47,23 +51,16 @@ export default async function handler(req, res) {
             let date = dayInfo[0].split(" ")[1]
             let [day, month, year] = date.split("/")
             
-            console.log(date)
-            console.log(lesson.start)
-            
             let [start_hours, start_minutes] = lesson.start.split(":")
             let [end_hours, end_minutes] = lesson.end.split(":")
             let teacher_names = lesson.teacher.split(" ");
-            
-            year = "20" + year
-            month = parseInt(month) - 1
-            start_hours = parseInt(start_hours) - 1
-            end_hours = parseInt(end_hours) - 1
 
-            console.log(start_hours)
-            
+            var start = moment.tz(`${year}-${month}-${day} ${start_hours}:${start_minutes}`, "YY-MM-DD HH:mm", "Europe/London").toDate();
+            var end = moment.tz(`${year}-${month}-${day} ${end_hours}:${end_minutes}`, "YY-MM-DD HH:mm", "Europe/London").toDate();
+
             builder.events.push({
-                start: new Date(year, month, day, start_hours, start_minutes),
-                end: new Date(year, month, day, end_hours, end_minutes),
+                start: start,
+                end: end,
                 transp: 'OPAQUE',
                 summary: lesson.class,
                 alarms: [15, 10, 5], 
