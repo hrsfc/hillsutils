@@ -46,6 +46,10 @@ export default async function handler(req, res) {
         dayInfo[1].forEach(lesson => {
             let date = dayInfo[0].split(" ")[1]
             let [day, month, year] = date.split("/")
+            
+            console.log(date)
+            console.log(lesson.start)
+            
             let [start_hours, start_minutes] = lesson.start.split(":")
             let [end_hours, end_minutes] = lesson.end.split(":")
             let teacher_names = lesson.teacher.split(" ");
@@ -55,6 +59,8 @@ export default async function handler(req, res) {
             start_hours = parseInt(start_hours) - 1
             end_hours = parseInt(end_hours) - 1
 
+            console.log(start_hours)
+            
             builder.events.push({
                 start: new Date(year, month, day, start_hours, start_minutes),
                 end: new Date(year, month, day, end_hours, end_minutes),
