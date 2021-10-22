@@ -9,5 +9,8 @@
     "devDependencies": {
         "@microsoft/teamsfx-cli": "0.*"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "moment-timezone": "^0.5.33"
+    }
 }
