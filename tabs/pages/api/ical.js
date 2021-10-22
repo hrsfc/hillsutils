@@ -52,6 +52,8 @@ export default async function handler(req, res) {
             
             year = "20" + year
             month = parseInt(month) - 1
+            start_hours = parseInt(start_hours) - 1
+            end_hours = parseInt(end_hours) - 1
 
             builder.events.push({
                 start: new Date(year, month, day, start_hours, start_minutes),
