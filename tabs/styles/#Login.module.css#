@@ -1,0 +1,74 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--midground);
+    padding: 50px;
+    width: 500px;
+    border-radius: 20px;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    box-shadow: 1px 1px 5px var(--background2);
+}
+
+.inputTypeText {
+    padding-left: 0px;
+    font-size: 20px;
+}
+
+.input {
+    padding: 0;
+    border-radius: 5px;
+    border: none;
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: var(--foreground);
+    color: var(--textonforeground);
+}
+
+.submit {
+    margin-top: 15px;
+    border-radius: 5px;
+    border: none;
+    padding: 5px;
+    background-color: var(--red);
+    color: var(--foreground);
+}
+
+.submit:hover,.submit:active {
+    background-color: var(--actionred);
+}
+
+.submit:active,.input:focus {
+    box-shadow: none;
+    border: 2px solid var(--red);
+    outline: none;
+}
+
+.input, .submit {
+    box-shadow: 1px 1px 2px var(--background2);
+    transition: 0.25s all;
+    border: 2px solid var(--background2);
+}
+
+.errorMessage {
+    display: block;
+    transition: 0.5s;
+    opacity: 1;
+    width: 600px;
+    background-color: var(--actionred);
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-radius: 20px;
+    padding: 50px;
+    z-index: 1;
+    box-shadow: 2px 2px 2px var(--background2);
+}
+
+.errorMessage.hidden {
+    opacity: 0;
+}

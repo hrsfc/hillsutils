@@ -1,0 +1,31 @@
+.backgroundWave {
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--background);
+    background-image: url("/wave.svg"), linear-gradient(90deg, var(--background) 0%, var(--background2) 100%);
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    padding: 50px;
+    transition: 1s all;
+}
+
+.submit {
+    width: 100%;
+    display: inline;
+}
+
+.field {
+    display: block;
+    padding: 5px;
+}
+
+.outer {
+    width: 100%;
+}
+
+.form {
+    position: relative !important;
+    transform: translate(-50%, 0) !important;
+    top: initial !important;
+}
