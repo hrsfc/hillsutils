@@ -60,7 +60,7 @@ export default async function handler(req, res) {
             end_hours = parseInt(end_hours)
 
             console.log(start_hours)
-            console.log(new Date(year, month, day, start_hours, start_minutes).toDateString())
+            console.log(new Date(year, month, day, start_hours, start_minutes).toUTCString())
             
             builder.events.push({
                 start: new Date(year, month, day, start_hours, start_minutes),
