@@ -55,12 +55,12 @@ export default async function handler(req, res) {
             let [end_hours, end_minutes] = lesson.end.split(":")
             let teacher_names = lesson.teacher.split(" ");
 
-            start = moment.tz(`${year}-${month}-${day} ${start_hours}:${start_minutes}`, "YY-MM-DD HH:mm", "Europe/London").toDate();
-            start = moment.tz(`${year}-${month}-${day} ${end_hours}:${end_minutes}`, "YY-MM-DD HH:mm", "Europe/London").toDate();
+            var start = moment.tz(`${year}-${month}-${day} ${start_hours}:${start_minutes}`, "YY-MM-DD HH:mm", "Europe/London").toDate();
+            var end = moment.tz(`${year}-${month}-${day} ${end_hours}:${end_minutes}`, "YY-MM-DD HH:mm", "Europe/London").toDate();
 
             builder.events.push({
-                start: new Date(year, month, day, start_hours, start_minutes),
-                end: new Date(year, month, day, end_hours, end_minutes),
+                start: start,
+                end: end,
                 transp: 'OPAQUE',
                 summary: lesson.class,
                 alarms: [15, 10, 5], 
