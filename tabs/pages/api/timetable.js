@@ -49,7 +49,7 @@ class Lesson {
 
 function getHUWeekStart(date) {
   let day = date.getDay();
-  date.setDate(date.getDate() - day + (day == 0 ? -6 : 1))
+  date.setDate(date.getDate() - day + (day == 6 ? 8 : 1))
   date.setHours(0);
   date.setMinutes(0);
   date.setSeconds(0);
