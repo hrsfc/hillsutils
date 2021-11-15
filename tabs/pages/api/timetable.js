@@ -15,7 +15,7 @@ const subjects = {
   "EP": "Extended Project",
   "PH": "Physics",
   "BS": "Business Studies"
-}
+};
 
 axiosCookieJarSupport(axios);
 
