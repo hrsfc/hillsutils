@@ -56,6 +56,15 @@ function getHUWeekStart(date) {
   return date;
 }
 
+function getPPWeekStart(date) {
+  let day = date.getDay();
+  date.setDate(date.getDate() - day + (day == 0 ? -6 : 1))
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  return date;
+}
+
 function getDates(start, weeks) {
   const number_of_weeks = weeks - 1;
   if (number_of_weeks < 0) throw "Error: Weeks was not positive";
@@ -103,7 +112,7 @@ export default async function handler(req, res) {
     start = start == "Invalid Date" ? new Date() : start;
 
     let weeks = getDates(start, number_of_weeks);
-    let currentWeek = getHUWeekStart(new Date());
+    let currentWeek = getPPWeekStart(new Date());
 
     const cookieJar = new CookieJar();
     const credentials = {
