@@ -15,7 +15,7 @@ const subjects = {
   "EP": "Extended Project",
   "PH": "Physics",
   "BS": "Business Studies"
-}
+};
 
 axiosCookieJarSupport(axios);
 
@@ -50,6 +50,15 @@ class Lesson {
 function getHUWeekStart(date) {
   let day = date.getDay();
   date.setDate(date.getDate() - day + (day == 6 ? 8 : 1))
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  return date;
+}
+
+function getPPWeekStart(date) {
+  let day = date.getDay();
+  date.setDate(date.getDate() - day + (day == 0 ? -6 : 1))
   date.setHours(0);
   date.setMinutes(0);
   date.setSeconds(0);
@@ -103,7 +112,7 @@ export default async function handler(req, res) {
     start = start == "Invalid Date" ? new Date() : start;
 
     let weeks = getDates(start, number_of_weeks);
-    let currentWeek = getHUWeekStart(new Date());
+    let currentWeek = getPPWeekStart(new Date());
 
     const cookieJar = new CookieJar();
     const credentials = {
