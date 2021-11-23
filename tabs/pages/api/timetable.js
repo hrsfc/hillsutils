@@ -8,7 +8,8 @@ import * as jsdom from 'jsdom';
 // Longer subject codes should *always* be first
 const subjects = {
   "ENR": "Enrichment",
-
+  "MT": "Music Technology",
+  "SP": "Spanish",
   "MF": "Maths",
   "CG": "Computer Science",
   "TU": "Tutorial",
