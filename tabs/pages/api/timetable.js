@@ -15,7 +15,8 @@ const subjects = {
   "TU": "Tutorial",
   "EP": "Extended Project",
   "PH": "Physics",
-  "BS": "Business Studies"
+  "BS": "Business Studies",
+  "IL": "Suggested learning time",
 };
 
 axiosCookieJarSupport(axios);
@@ -39,6 +40,11 @@ class Lesson {
     this.start = classInfo[0]
     this.end = classInfo[2]
     this.class = classInfo[3]
+    this.independent = this.class.startsWith("IL");
+
+    if (this.independent) {
+      this.teacher = "no teacher";
+    }
     for (const [code, subject] of Object.entries(subjects)) {
       if (this.class.startsWith(code)) {
         this.class = subject;
