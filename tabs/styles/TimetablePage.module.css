@@ -8,6 +8,7 @@
     background-size: 100%;
     padding: 50px;
     transition: 1s all;
+    overflow: hidden;
 }
 
 .submit {
