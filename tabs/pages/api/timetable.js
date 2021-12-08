@@ -36,7 +36,7 @@ class Lesson {
     this.room = lessonData[3].trim()
 
     const classInfo = lessonData[1].trim().split(" ")
-    
+
     this.start = classInfo[0]
     this.end = classInfo[2]
     this.class = classInfo[3]
@@ -115,9 +115,9 @@ export default async function handler(req, res) {
     let number_of_weeks = parseInt(req.query.weeks);
     number_of_weeks = number_of_weeks == NaN ? 1 : number_of_weeks;
     number_of_weeks = number_of_weeks < 1 ? 1 : number_of_weeks;
-	
-    let excludeIL = req.query.excludeIL;
-    
+
+    let excludeIL = (req.query.excludeIL == "true");
+
     let start = new Date(req.query.start);
     start = start == "Invalid Date" ? new Date() : start;
 
@@ -198,7 +198,7 @@ export default async function handler(req, res) {
 
     periods.forEach((period, index) => {
       if(period.tagName == "TD") return;
-      lesson = new Lesson(period.textContent.split("\n"));
+      let lesson = new Lesson(period.textContent.split("\n"));
       if (excludeIL && lesson.independent) return;
       dates[index % 5][1].push(lesson);
     })

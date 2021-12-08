@@ -8,6 +8,7 @@
     background-size: 100%;
     padding: 50px;
     transition: 1s all;
+    overflow: hidden;
 }
 
 .submit {
@@ -28,4 +29,7 @@
     position: relative !important;
     transform: translate(-50%, 0) !important;
     top: initial !important;
+}
+.checkbox {
+    color: var(--foreground);
 }

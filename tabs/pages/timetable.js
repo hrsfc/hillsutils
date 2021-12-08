@@ -25,13 +25,15 @@ class TimeTablePage extends Component {
             reason: undefined,
 	    date: {weeks: 1, start: null},
 	    username: cookies.username,
-	    password: cookies.password
+	    password: cookies.password,
+            excludeIL: true
 	}
         this.req;
         this.updateTimetable = this.updateTimetable.bind(this);
         this.attemptToLogin = this.attemptToLogin.bind(this);
 	this.handleWeeksChange = this.handleWeeksChange.bind(this);
 	this.handleDateChange = this.handleDateChange.bind(this);
+        this.handleILChange = this.handleILChange.bind(this);
     }
     componentDidMount() {
         let username = this.state.username;
@@ -88,7 +90,7 @@ class TimeTablePage extends Component {
                 }
             }
         };
-        this.req.open("GET", `/api/timetable?username=${username}&password=${password}&weeks=${this.state.date.weeks}&start=${this.state.date.start ?? new Date().toDateString()}`);
+        this.req.open("GET", `/api/timetable?excludeIL=${this.state.excludeIL}&username=${username}&password=${password}&weeks=${this.state.date.weeks}&start=${this.state.date.start ?? new Date().toDateString()}`);
         this.req.send();
     }
 
@@ -120,7 +122,15 @@ class TimeTablePage extends Component {
 	    }
 	);
     }
-    
+
+    handleILChange(e) {
+//        e.preventDefault();
+        this.setState(state => {
+            console.log(state.excludeIL)
+            return {excludeIL: !state.excludeIL}
+        });
+    }
+
     render() {
         return (
 		<>
@@ -145,9 +155,11 @@ class TimeTablePage extends Component {
 			    <Datetime className={Styles.outer} onChange={this.handleDateChange} value={this.state.date.start ?? new Date()} dateFormat="D / M / Y" timeFormat={false} />
 			    <span className={LoginStyles.inputTypeText}>Number of weeks:</span>
 			    <input type="number" className={LoginStyles.input + " " + Styles.input} onChange={this.handleWeeksChange} value={this.state.date.weeks} />
-			    <button className={LoginStyles.submit + " " + Styles.submit} onClick={() => this.updateTimetable(this.state.username, this.state.password)}>Refresh timetable</button>
-                <Link href={`${this.props.router.basePath}/api/ical?username=${this.state.username}&password=${this.state.password}&weeks=${this.state.date.weeks}&start=${this.state.date.start ?? new Date().toDateString()}`}><a className={LoginStyles.submit + " " + Styles.submit}>Export as ical</a></Link>
-                <Link href={`${this.props.router.basePath}/api/ical?username=${this.state.username}&password=${this.state.password}&weeks=${this.state.date.weeks}`}><a className={LoginStyles.submit + " " + Styles.submit}>Export as rolling ical</a></Link>
+			    <span className={LoginStyles.inputTypeText}>Ignore suggested independent study:</span>
+			    <input type="checkbox" className={LoginStyles.input + " " + Styles.input} onChange={this.handleILChange} value="excludeIL" checked={this.state.excludeIL} />
+			    <button className={LoginStyles.submit + " " + Styles.checkbox} onClick={() => this.updateTimetable(this.state.username, this.state.password)}>Refresh timetable</button>
+                <Link href={`${this.props.router.basePath}/api/ical?excludeIL=${this.state.excludeIL}&username=${this.state.username}&password=${this.state.password}&weeks=${this.state.date.weeks}&start=${this.state.date.start ?? new Date().toDateString()}`}><a className={LoginStyles.submit + " " + Styles.submit}>Export as ical</a></Link>
+                <Link href={`${this.props.router.basePath}/api/ical?excludeIL=${this.state.excludeIL}&username=${this.state.username}&password=${this.state.password}&weeks=${this.state.date.weeks}`}><a className={LoginStyles.submit + " " + Styles.submit}>Export as rolling ical</a></Link>
 			    </div>
 			    </>
 		    );
