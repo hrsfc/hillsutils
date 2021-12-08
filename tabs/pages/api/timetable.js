@@ -15,7 +15,8 @@ const subjects = {
   "TU": "Tutorial",
   "EP": "Extended Project",
   "PH": "Physics",
-  "BS": "Business Studies"
+  "BS": "Business Studies",
+  "IL": "Suggested learning time",
 };
 
 axiosCookieJarSupport(axios);
@@ -39,6 +40,11 @@ class Lesson {
     this.start = classInfo[0]
     this.end = classInfo[2]
     this.class = classInfo[3]
+    this.independent = this.class.startsWith("IL");
+
+    if (this.independent) {
+      this.teacher = "no teacher";
+    }
     for (const [code, subject] of Object.entries(subjects)) {
       if (this.class.startsWith(code)) {
         this.class = subject;
@@ -96,7 +102,8 @@ function getDates(start, weeks) {
  * The password should be the password for the proportal account
  * The start_date should be convertable to a date by new Date(). It should be noted that here weeks start on saturday despite starting on Monday on proportal. This is so that fetching the timetable for saturday does not give you the previous week
  * The number_of_weeks should be a number of weeks that you would like to output after the start date. Putting 1 will only output 1 week, putting 2 will output the selected week and the next week etc. You may only input positive values. It's considered good practice to output only as many weeks as you need. If there is a demand for skipping weeks, please contact st137303@hrsfc.ac.uk and another solution may be implemented
- * 
+ * The excludeIL should be a boolean, denoting if independent learning periods should be excluded. The default is false
+ *
  * The JSON is in the format
  * {"data":[["Mon 13/09/21", [{"teacher":"Maya Marty","room":"M204","start":"09:00","end":"10:05","class":"TU1-Esa"}, ...], ...]}
  * 
@@ -108,6 +115,8 @@ export default async function handler(req, res) {
     let number_of_weeks = parseInt(req.query.weeks);
     number_of_weeks = number_of_weeks == NaN ? 1 : number_of_weeks;
     number_of_weeks = number_of_weeks < 1 ? 1 : number_of_weeks;
+	
+    let excludeIL = req.query.excludeIL;
     
     let start = new Date(req.query.start);
     start = start == "Invalid Date" ? new Date() : start;
@@ -189,7 +198,9 @@ export default async function handler(req, res) {
 
     periods.forEach((period, index) => {
       if(period.tagName == "TD") return;
-      dates[index % 5][1].push(new Lesson(period.textContent.split("\n")));
+      lesson = new Lesson(period.textContent.split("\n"));
+      if (excludeIL && lesson.independent) return;
+      dates[index % 5][1].push(lesson);
     })
 
     allDates = allDates.concat(dates);
