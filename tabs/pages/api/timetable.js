@@ -116,7 +116,7 @@ export default async function handler(req, res) {
     number_of_weeks = number_of_weeks == NaN ? 1 : number_of_weeks;
     number_of_weeks = number_of_weeks < 1 ? 1 : number_of_weeks;
 
-    let excludeIL = (req.query.excludeIL == "true");
+    let excludeIL = (req.query.excludeIL != "false");
 
     let start = new Date(req.query.start);
     start = start == "Invalid Date" ? new Date() : start;
