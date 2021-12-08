@@ -30,3 +30,6 @@
     transform: translate(-50%, 0) !important;
     top: initial !important;
 }
+.checkbox {
+    color: var(--foreground);
+}

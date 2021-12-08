@@ -157,7 +157,7 @@ class TimeTablePage extends Component {
 			    <input type="number" className={LoginStyles.input + " " + Styles.input} onChange={this.handleWeeksChange} value={this.state.date.weeks} />
 			    <span className={LoginStyles.inputTypeText}>Ignore suggested independent study:</span>
 			    <input type="checkbox" className={LoginStyles.input + " " + Styles.input} onChange={this.handleILChange} value="excludeIL" checked={this.state.excludeIL} />
-			    <button className={LoginStyles.submit + " " + Styles.submit} onClick={() => this.updateTimetable(this.state.username, this.state.password)}>Refresh timetable</button>
+			    <button className={LoginStyles.submit + " " + Styles.checkbox} onClick={() => this.updateTimetable(this.state.username, this.state.password)}>Refresh timetable</button>
                 <Link href={`${this.props.router.basePath}/api/ical?excludeIL=${this.state.excludeIL}&username=${this.state.username}&password=${this.state.password}&weeks=${this.state.date.weeks}&start=${this.state.date.start ?? new Date().toDateString()}`}><a className={LoginStyles.submit + " " + Styles.submit}>Export as ical</a></Link>
                 <Link href={`${this.props.router.basePath}/api/ical?excludeIL=${this.state.excludeIL}&username=${this.state.username}&password=${this.state.password}&weeks=${this.state.date.weeks}`}><a className={LoginStyles.submit + " " + Styles.submit}>Export as rolling ical</a></Link>
 			    </div>
