@@ -13,7 +13,7 @@ const subjects = {
   "MF": "Maths",
   "CG": "Computer Science",
   "TU": "Tutorial",
-  "FP": "Future-ready Program",
+  "FP": "Tutorial (Future-ready Program)",
   "EP": "Extended Project",
   "PH": "Physics",
   "BS": "Business Studies",
