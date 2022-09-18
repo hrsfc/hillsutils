@@ -34,7 +34,7 @@ class Lesson {
     this.teacher = lessonData[2].split(', ')
     this.teacher = this.teacher[1] + " " + (this.teacher[0][0] + this.teacher[0].slice(1).toLowerCase()).replace(/ ./g, char => { return char.toUpperCase() });
 
-    this.room = lessonData[3].trim()
+    this.room = lessonData[3].trim() || "Independent learning"
 
     const classInfo = lessonData[1].trim().split(" ")
 
@@ -43,7 +43,7 @@ class Lesson {
     this.class = classInfo[3]
     this.independent = this.class.startsWith("IL");
 
-    if (this.independent) {
+    if (this.independent || this.teacher[1] === undefined) {
       this.teacher = "no teacher";
     }
     for (const [code, subject] of Object.entries(subjects)) {
