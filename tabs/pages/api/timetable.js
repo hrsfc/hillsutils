@@ -31,10 +31,7 @@ const errorInterceptor = error => {
 
 class Lesson {
   constructor(lessonData) {
-    this.teacher = lessonData[2].split(', ')
-    this.teacher = this.teacher[1] + " " + (this.teacher[0][0] + this.teacher[0].slice(1).toLowerCase()).replace(/ ./g, char => { return char.toUpperCase() });
-
-    this.room = lessonData[3].trim() || "Independent learning"
+    this.room = lessonData[3].trim() || "Independent learning";
 
     const classInfo = lessonData[1].trim().split(" ")
 
@@ -43,9 +40,14 @@ class Lesson {
     this.class = classInfo[3]
     this.independent = this.class.startsWith("IL");
 
-    if (this.independent || this.teacher[1] === undefined) {
+    this.teacher = lessonData[2].split(', ')
+	  
+    if (this.teacher[1] && !this.independent) {
+      this.teacher = this.teacher[1] + " " + (this.teacher[0][0] + this.teacher[0].slice(1).toLowerCase()).replace(/ ./g, char => { return char.toUpperCase() });
+    } else {
       this.teacher = "no teacher";
     }
+    
     for (const [code, subject] of Object.entries(subjects)) {
       if (this.class.startsWith(code)) {
         this.class = subject;
