@@ -19,7 +19,7 @@
     "moment-timezone": "^0.5.35",
     "next": "12.1.0",
     "nookies": "^2.5.2",
-    "qs": "^6.10.1",
+    "qs": "^6.10.3",
     "react": "17.0.2",
     "react-datetime": "^3.1.1",
     "react-dom": "17.0.2",
