@@ -19,7 +19,7 @@ const subjects = {
   "BS": "Business Studies",
   "IL": "Suggested learning time",
   "HR": "History",
-  "HC": "History" // There are 2 history courses
+  "HC": "History", // There are 2 history courses
 };
 
 axiosCookieJarSupport(axios);
